@@ -1,0 +1,292 @@
+ <!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rastreador de Gastos Personales</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ============ BOTÓN TOGGLE MÓVIL ============ -->
+  <header class="topbar">
+    <button
+      class="btn-icon btn-menu-toggle"
+      type="button"
+      data-action="toggle-sidebar"
+      aria-expanded="false"
+      aria-controls="sidebar"
+      aria-label="Abrir panel de presupuesto">
+      <span class="icon-burger" aria-hidden="true" data-action="toggle-sidebar"></span>
+    </button>
+    <p class="topbar__title">Gastos<span class="topbar__title-accent">.</span></p>
+    <span class="topbar__spacer" aria-hidden="true"></span>
+  </header>
+
+  <!-- Fondo oscuro al abrir sidebar en móvil -->
+  <div class="sidebar-overlay oculto" data-el="overlay"></div>
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar oculto" id="sidebar" data-el="sidebar" aria-label="Panel de presupuesto">
+
+    <div class="sidebar__inner">
+
+      <div class="sidebar__brand">
+        <p class="sidebar__brand-mark">Gastos<span class="topbar__title-accent">.</span></p>
+        <button
+          class="btn-icon btn-close-sidebar"
+          type="button"
+          data-action="close-sidebar" >
+          &times;
+        </button>
+      </div>
+
+      <!-- INGRESO TOTAL -->
+      <section class="sidebar__section" aria-labelledby="titulo-ingreso">
+        <h2 class="sidebar__label" id="titulo-ingreso">Ingreso total</h2>
+        <form class="form-ingreso" data-form="ingreso-total">
+          <div class="input-currency">
+            <span class="input-currency__symbol" aria-hidden="true">L. </span>
+            <input
+              type="number"
+              inputmode="decimal"
+              step="0.01"
+              min="0"
+              class="input-currency__field"
+              id="ingreso-total"
+              name="ingreso-total"
+              placeholder="0.00"
+              data-field="ingreso-total"
+              aria-label="Monto de ingreso total">
+          </div>
+          <button type="button" class="btn btn--pequeno btn--linea" data-action="guardar-ingreso">
+            Guardar ingreso
+          </button>
+        </form>
+      </section>
+
+      <!-- SALDO DISPONIBLE (ticket / recibo) -->
+      <section class="sidebar__section" aria-labelledby="titulo-saldo">
+        <h2 class="sidebar__label" id="titulo-saldo">Saldo disponible</h2>
+        <div class="ticket-saldo" data-el="ticket-saldo">
+          <div class="ticket-saldo__perforado ticket-saldo__perforado--top" aria-hidden="true"></div>
+          <div class="ticket-saldo__cuerpo">
+            <span class="ticket-saldo__etiqueta">Disponible hoy</span>
+            <p class="ticket-saldo__monto" data-field="saldo-disponible">L. 0.00</p>
+            <div class="ticket-saldo__desglose">
+              <span>Ingreso: <strong data-field="resumen-ingreso">L. 0.00</strong></span>
+              <span>Gastado: <strong data-field="resumen-gastado">L. 0.00</strong></span>
+            </div>
+          </div>
+          <div class="ticket-saldo__perforado ticket-saldo__perforado--bottom" aria-hidden="true"></div>
+        </div>
+        <button type="button" class="btn btn--pequeno btn--peligro" data-action="reiniciar-presupuesto">
+    Reiniciar presupuesto
+  </button>
+      </section>
+
+      <!-- SALUD DEL PRESUPUESTO -->
+      <section class="sidebar__section" aria-labelledby="titulo-salud">
+        <div class="sidebar__label-row">
+          <h2 class="sidebar__label" id="titulo-salud">Salud del presupuesto</h2>
+          <span class="salud-porcentaje" data-field="salud-porcentaje">0%</span>
+        </div>
+
+        <div
+          class="barra-progreso"
+          role="progressbar"
+          aria-labelledby="titulo-salud"
+          aria-valuenow="0"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          data-el="barra-progreso">
+          <div class="barra-progreso__marcas" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="barra-progreso__relleno barra-segura" data-el="barra-relleno" style="width: 0%;"></div>
+        </div>
+
+        <p class="salud-mensaje" data-field="salud-mensaje">Registra tu ingreso para comenzar.</p>
+      </section>
+
+      <!-- FILTROS POR CATEGORÍA -->
+      <nav class="sidebar__section" aria-labelledby="titulo-filtros">
+        <h2 class="sidebar__label" id="titulo-filtros">Filtrar por categoría</h2>
+        <ul class="lista-filtros" data-el="lista-filtros">
+          <li>
+            <button type="button" class="filtro-item is-activo" data-action="filtrar" data-categoria="todos">
+  <span data-action="filtrar" data-categoria="todos" class="filtro-item__punto filtro-item__punto--todos" aria-hidden="true"></span>
+              Todos
+            </button>
+          </li>
+          <li>
+            <button type="button" class="filtro-item" data-action="filtrar" data-categoria="comida">
+              <span data-categoria="comida" class="filtro-item__punto filtro-item__punto--comida" aria-hidden="true"></span>
+              Comida
+            </button>
+          </li>
+          <li>
+            <button type="button" class="filtro-item" data-action="filtrar" data-categoria="transporte">
+              <span data-categoria="transporte" class="filtro-item__punto filtro-item__punto--transporte" aria-hidden="true"></span>
+              Transporte
+            </button>
+          </li>
+          <li>
+            <button type="button" class="filtro-item" data-action="filtrar" data-categoria="diversion">
+              <span data-categoria="diversion" class="filtro-item__punto filtro-item__punto--diversion" aria-hidden="true"></span>
+              Diversión
+            </button>
+          </li>
+          <li>
+            <button type="button" class="filtro-item" data-action="filtrar" data-categoria="varios">
+              <span data-categoria="varios" class="filtro-item__punto filtro-item__punto--varios" aria-hidden="true"></span>
+              Varios
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+    </div>
+  </aside>
+
+  <!-- ============ CONTENIDO PRINCIPAL ============ -->
+  <main class="main" id="main-content">
+
+    <div class="main__inner">
+
+      <header class="main__header">
+        <h1 class="main__title">Tus gastos</h1>
+        <p class="main__subtitle">Registra un movimiento y llevá el control de tu presupuesto.</p>
+      </header>
+
+      <!-- FORMULARIO NUEVO GASTO -->
+      <section class="panel panel-formulario" aria-labelledby="titulo-form">
+        <h2 class="panel__titulo" id="titulo-form">Registrar gasto</h2>
+
+        <form novalidate class="form-gasto" data-form="nuevo-gasto">
+
+          <div class="campo campo--descripcion">
+            <label class="campo__label" for="gasto-descripcion">Descripción</label>
+            <input
+              type="text"
+              id="gasto-descripcion"
+              name="descripcion"
+              class="campo__input"
+              placeholder="Ej. Supermercado"
+              data-field="descripcion"
+               >
+               <span id="spanErrorDescripcion" class="campo__error" data-el="error-monto"></span>
+          </div>
+
+          <div class="campo campo--monto">
+            <label class="campo__label" for="gasto-monto">Monto</label>
+            <div class="input-currency">
+              <span class="input-currency__symbol" aria-hidden="true">L. </span>
+              <input
+                type="number"
+                inputmode="decimal"
+                step="0.01"
+                min="0"
+                id="gasto-monto"
+                name="monto"
+                class="input-currency__field"
+                placeholder="0.00"
+                data-field="monto"
+                 > 
+            </div>
+            <span id="spanErrorMonto" class="campo__error" data-el="error-monto"></span>
+          </div>
+
+          <div class="campo campo--fecha">
+            <label class="campo__label" for="gasto-fecha">Fecha</label>
+            <input
+              type="date"
+              id="gasto-fecha"
+              name="fecha"
+              class="campo__input"
+              data-field="fecha"
+               >
+               <span id="spanErrorFecha" class="campo__error" data-el="error-monto"></span>
+          </div>
+
+          <div class="campo campo--categoria">
+            <label class="campo__label" for="gasto-categoria">Categoría</label>
+            <select
+              id="gasto-categoria"
+              name="categoria"
+              class="campo__input campo__select"
+              data-field="categoria"
+               > 
+              <option value="comida">Comida</option>
+              <option value="transporte">Transporte</option>
+              <option value="diversion">Diversión</option>
+              <option value="varios">Varios</option>
+            </select>
+          </div>
+
+          <div class="campo campo--submit">
+            <button type="submit" class="btn btn--primario" data-action="agregar-gasto">
+              Agregar gasto
+            </button>
+          </div>
+
+        </form>
+      </section>
+
+      <!-- LISTA DE GASTOS -->
+      <section class="panel panel-lista" aria-labelledby="titulo-lista">
+
+        <div class="panel-lista__header">
+          <h2 class="panel__titulo" id="titulo-lista">Historial</h2>
+          <span class="panel-lista__contador" data-field="contador-gastos">0 movimientos</span>
+        </div>
+
+        <ul class="lista-gastos" data-el="lista-gastos"> 
+        </ul>
+
+        <!-- Estado vacío: mostrar cuando no haya gastos, ocultar los demás -->
+        <div id="contenedor_estado_vacio" class="estado-vacio oculto" data-el="estado-vacio" hidden>
+          <p class="estado-vacio__titulo">Todavía no hay movimientos</p>
+          <p class="estado-vacio__texto">Los gastos que registres van a aparecer acá.</p>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- ============================================================
+     PLANTILLA DE FILA DE GASTO (para clonar por JS, no se renderiza)
+     Duplicar este <template>, rellenar data-field y quitar el atributo
+     'hidden' del <li> generado antes de insertarlo en la lista.
+============================================================ -->
+<template data-template="gasto-item">
+  <li class="gasto-item" data-id="">
+    <div class="gasto-item__principal">
+      <span class="badge" data-field="categoria"></span>
+      <div class="gasto-item__detalle">
+        <p class="gasto-item__descripcion" data-field="descripcion"></p>
+        <p class="gasto-item__fecha" data-field="fecha"></p>
+      </div>
+    </div>
+    <div class="gasto-item__acciones">
+      <span class="gasto-item__monto" data-field="monto"></span>
+       <button type="button" class="btn-icon btn-eliminar" data-action="eliminar-gasto" data-id="" aria-label="Eliminar gasto">
+        <span class="icon-trash" aria-hidden="true"></span>
+      </button>
+    </div>
+  </li>
+</template>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script type="module" src="/js/event.js"></script>
+</body>
+</html>
